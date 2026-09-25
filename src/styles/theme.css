@@ -1,0 +1,33 @@
+:root {
+  --bg: #f7f7fb;
+  --surface: #fff;
+  --surface-alt: #eeeef6;
+  --text: #20212e;
+  --muted: #626374;
+  --line: #dcdce8;
+  --accent: #7151ce;
+  --cyan: #137f95;
+  --accent-soft: #ece7fb;
+  --glow: rgba(117, 81, 208, 0.13);
+  --nav: rgba(247, 247, 251, 0.88);
+  --shadow: 0 15px 50px #35305008;
+  --heading: "Space Grotesk", sans-serif;
+  --body: "Inter", sans-serif;
+  --mono: "JetBrains Mono", monospace;
+  color-scheme: light;
+}
+:root.dark {
+  --bg: #0a0a0f;
+  --surface: #111117;
+  --surface-alt: #17171f;
+  --text: #eeeef4;
+  --muted: #9494a8;
+  --line: #252530;
+  --accent: #b09af2;
+  --cyan: #79cfdb;
+  --accent-soft: #231d34;
+  --glow: rgba(139, 96, 230, 0.14);
+  --nav: rgba(10, 10, 15, 0.84);
+  --shadow: 0 15px 50px #00000015;
+  color-scheme: dark;
+}
