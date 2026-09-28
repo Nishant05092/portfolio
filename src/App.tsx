@@ -47,13 +47,87 @@ export default function App() {
     if (reduced || notFound) return;
     const ctx = gsap.context(() => {
       gsap.utils.toArray<HTMLElement>(".section-heading").forEach((el) =>
-        gsap.from(el, {
-          y: 28,
+        gsap.from(Array.from(el.children), {
+          y: 42,
           opacity: 0,
-          duration: 0.7,
-          scrollTrigger: { trigger: el, start: "top 92%", once: true },
+          filter: "blur(8px)",
+          duration: 0.9,
+          stagger: 0.12,
+          ease: "power3.out",
+          clearProps: "transform,opacity,filter",
+          scrollTrigger: { trigger: el, start: "top 90%", once: true },
         }),
       );
+      gsap.utils.toArray<HTMLElement>(".reveal").forEach((el) =>
+        gsap.from(el, {
+          y: 52,
+          opacity: 0,
+          scale: 0.985,
+          filter: "blur(10px)",
+          duration: 0.95,
+          ease: "power3.out",
+          clearProps: "transform,opacity,filter",
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        }),
+      );
+      gsap.utils.toArray<HTMLElement>(".reveal-stagger").forEach((el) =>
+        gsap.from(Array.from(el.children), {
+          y: 48,
+          opacity: 0,
+          scale: 0.975,
+          filter: "blur(7px)",
+          duration: 0.8,
+          stagger: 0.13,
+          ease: "power3.out",
+          clearProps: "transform,opacity,filter",
+          scrollTrigger: { trigger: el, start: "top 86%", once: true },
+        }),
+      );
+      gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .from(".hero h1", {
+          y: 34,
+          opacity: 0,
+          filter: "blur(12px)",
+          duration: 1,
+          delay: 0.12,
+          clearProps: "transform,opacity,filter",
+        })
+        .from(
+          "[data-hero-reveal]",
+          {
+            y: 28,
+            opacity: 0,
+            filter: "blur(8px)",
+            duration: 0.7,
+            stagger: 0.11,
+            clearProps: "transform,opacity,filter",
+          },
+          "<0.18",
+        )
+        .from(
+          ".hero-visual",
+          {
+            opacity: 0,
+            scale: 0.82,
+            rotate: -7,
+            filter: "blur(14px)",
+            duration: 1.35,
+            clearProps: "transform,opacity,filter",
+          },
+          "<0.05",
+        )
+        .from(
+          ".floating-badge",
+          {
+            opacity: 0,
+            scale: 0.7,
+            duration: 0.55,
+            stagger: 0.12,
+            clearProps: "transform,opacity",
+          },
+          "-=0.55",
+        );
       if (document.querySelector(".timeline"))
         gsap.from(".timeline-fill", {
           scaleY: 0,
@@ -75,6 +149,51 @@ export default function App() {
             scrub: 1,
           },
         });
+      gsap.utils
+        .toArray<HTMLElement>(".hero-visual .orb-ring")
+        .forEach((ring, i) =>
+          gsap.to(ring, {
+            y: i ? -14 : 11,
+            scrollTrigger: {
+              trigger: ".hero",
+              start: "top top",
+              end: "bottom top",
+              scrub: 1.2,
+            },
+          }),
+        );
+      gsap.utils.toArray<HTMLElement>(".project-card").forEach((card) => {
+        const image = card.querySelector<HTMLElement>(".project-image img");
+        if (!image) return;
+        gsap.fromTo(
+          image,
+          { yPercent: -5, scale: 1.06 },
+          {
+            yPercent: 5,
+            scale: 1.1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 0.8,
+            },
+          },
+        );
+      });
+      gsap.from(".timeline-dot", {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        stagger: 0.22,
+        ease: "back.out(1.8)",
+        clearProps: "transform,opacity",
+        scrollTrigger: {
+          trigger: ".timeline",
+          start: "top 78%",
+          once: true,
+        },
+      });
     });
     const timer = setTimeout(() => ScrollTrigger.refresh(), 800);
     return () => {

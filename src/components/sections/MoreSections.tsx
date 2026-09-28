@@ -24,7 +24,7 @@ export function Education() {
     <section id="education" className="section container">
       <Heading id="education" />
       {education.map((e) => (
-        <Card key={`${e.institution}-${e.period}`} className="education-card">
+        <Card key={`${e.institution}-${e.period}`} className="education-card reveal">
           <GraduationCap size={30} />
           <div>
             <p className="eyebrow">{e.period}</p>
@@ -41,7 +41,7 @@ export function Certifications() {
   return (
     <section id="certifications" className="section container">
       <Heading id="certifications" />
-      <div className="three-grid">
+      <div className="three-grid reveal-stagger">
         {credentials.map((c) => (
           <Card key={c.title}>
             <Award className="accent" size={25} />
@@ -69,7 +69,7 @@ export function Blog() {
   return (
     <section id="blog" className="section container">
       <Heading id="blog" />
-      <div className="three-grid">
+      <div className="three-grid reveal-stagger">
         {articles.map((a) => (
           <Card key={a.title}>
             <p className="eyebrow">{a.category}</p>
@@ -99,7 +99,7 @@ export function Testimonials() {
   return (
     <section id="testimonials" className="section container">
       <Heading id="testimonials" />
-      <Card>
+      <Card className="reveal">
         <blockquote>“{t.quote}”</blockquote>
         {t.name && <h3>{t.name}</h3>}
         <p>{t.role}</p>
@@ -163,7 +163,7 @@ export function Contact() {
   }
   return (
     <section id="contact" className="section container">
-      <div className="contact-panel">
+      <div className="contact-panel reveal">
         <div>
           <p className="eyebrow">{copy.label11SayHello}</p>
           <h2>

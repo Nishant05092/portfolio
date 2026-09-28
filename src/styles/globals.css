@@ -6,9 +6,11 @@
 }
 html {
   scroll-padding-top: 100px;
+  overflow-x: clip;
 }
 body {
   margin: 0;
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text);
   font-family: var(--body);
@@ -139,7 +141,9 @@ p {
   transition:
     transform 0.2s,
     border-color 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    background-color 0.2s;
+  will-change: transform;
 }
 .button:hover {
   transform: translateY(-2px);
@@ -153,6 +157,9 @@ p {
 }
 .button.primary:hover {
   background: #c1adfb;
+}
+.button:active {
+  transform: translateY(0) scale(0.98);
 }
 .button.small {
   min-height: 36px;
@@ -188,6 +195,16 @@ p {
   font-size: 12px;
   margin-top: 20px;
 }
+.text-link::after {
+  content: "";
+  width: 0;
+  height: 1px;
+  background: currentColor;
+  transition: width 0.25s ease;
+}
+.text-link:hover::after {
+  width: 18px;
+}
 .navbar {
   height: 82px;
   position: sticky;
@@ -222,8 +239,26 @@ p {
   gap: 29px;
 }
 .navbar nav a {
+  position: relative;
   font-size: 11px;
   color: var(--muted);
+}
+.navbar nav a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  left: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.25s ease;
+}
+.navbar nav a:hover::after,
+.navbar nav a.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
 }
 .navbar nav a:hover,
 .navbar nav a.active {
@@ -259,6 +294,31 @@ p {
   padding-top: 54px;
   padding-bottom: 92px;
   isolation: isolate;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 4%;
+  right: -16%;
+  width: 72%;
+  height: 88%;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 62% 44%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 35%
+    ),
+    conic-gradient(
+      from 205deg at 55% 50%,
+      transparent,
+      var(--glow),
+      transparent 38%
+    );
+  filter: blur(28px);
+  opacity: 0.75;
+  animation: hero-aura 10s ease-in-out infinite alternate;
 }
 .hero-copy {
   z-index: 2;
@@ -355,6 +415,8 @@ p {
   height: 460px;
   position: relative;
   margin-left: 15px;
+  perspective: 1000px;
+  transform-style: preserve-3d;
 }
 .orb-halo {
   position: absolute;
@@ -362,6 +424,7 @@ p {
   border-radius: 50%;
   background: radial-gradient(ellipse, #8c54cf25, transparent 66%);
   filter: blur(20px);
+  animation: halo-breathe 5.5s ease-in-out infinite;
 }
 .scene {
   position: absolute;
@@ -386,6 +449,7 @@ p {
   border-radius: 50%;
   transform: rotate(-27deg) scaleY(0.75);
   z-index: 1;
+  box-shadow: 0 0 45px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 .ring-two {
   inset: 0;
@@ -511,7 +575,11 @@ p {
   border-radius: 10px;
   padding: 26px;
   box-shadow: var(--shadow);
-  transition: border-color 0.25s;
+  transition:
+    border-color 0.25s,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
 }
 .glass-card:hover {
   border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
@@ -522,6 +590,8 @@ p {
       transparent 70%
     ),
     var(--surface);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px var(--glow);
 }
 .glass-card p {
   font-size: 12px;
@@ -667,17 +737,44 @@ p {
   gap: 20px;
 }
 .project-card {
+  --card-rx: 0deg;
+  --card-ry: 0deg;
+  --card-x: 50%;
+  --card-y: 50%;
+  position: relative;
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
   background: var(--surface);
   transition:
     border-color 0.3s,
-    box-shadow 0.3s;
+    box-shadow 0.3s,
+    transform 0.3s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+.project-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    280px circle at var(--card-x) var(--card-y),
+    color-mix(in srgb, var(--accent) 15%, transparent),
+    transparent 68%
+  );
+  transition: opacity 0.3s ease;
 }
 .project-card:hover {
   border-color: #8b6bc87a;
-  box-shadow: 0 12px 40px var(--glow);
+  box-shadow: 0 22px 60px var(--glow);
+  transform: perspective(1000px) translateY(-8px) rotateX(var(--card-rx))
+    rotateY(var(--card-ry));
+}
+.project-card:hover::after {
+  opacity: 1;
 }
 .project-image {
   position: relative;
@@ -692,10 +789,30 @@ p {
   height: auto;
   aspect-ratio: 800/460;
   object-fit: cover;
-  transition: transform 0.6s;
+  transition: filter 0.5s;
+  will-change: transform;
 }
 .project-card:hover .project-image img {
-  transform: scale(1.045) rotate(0.4deg);
+  filter: saturate(1.12) contrast(1.04);
+}
+.project-image::after {
+  content: "";
+  position: absolute;
+  inset: -100% 0 auto;
+  height: 45%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 18%, transparent),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.project-card:hover .project-image::after {
+  opacity: 1;
+  animation: project-scan 1.4s ease-out;
 }
 .project-number {
   position: absolute;
@@ -714,6 +831,13 @@ p {
   padding: 5px;
   color: #d8cbee;
   background: #ffffff05;
+  transition:
+    transform 0.35s ease,
+    background-color 0.35s ease;
+}
+.project-card:hover .project-open {
+  transform: rotate(45deg) scale(1.08);
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 .project-body {
   padding: 24px 21px 0;
@@ -1006,6 +1130,7 @@ p {
 .timeline-fill {
   height: 100%;
   background: var(--accent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 .experience-row {
   display: grid;
@@ -1025,6 +1150,36 @@ p {
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--bg);
+  box-shadow:
+    0 0 0 0 var(--glow),
+    0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.experience-row:hover .timeline-dot {
+  transform: scale(1.45);
+  box-shadow:
+    0 0 0 7px var(--accent-soft),
+    0 0 22px var(--accent);
+}
+.experience-row .glass-card {
+  overflow: hidden;
+}
+.experience-row .glass-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.45s ease;
+}
+.experience-row:hover .glass-card::after {
+  transform: scaleY(1);
 }
 .experience-date > span:not(.timeline-dot) {
   font-size: 11px;
@@ -1195,6 +1350,10 @@ textarea {
   color: var(--text);
   font-size: 11px;
   resize: vertical;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
 }
 textarea {
   min-height: 130px;
@@ -1203,6 +1362,11 @@ input::placeholder,
 textarea::placeholder {
   color: var(--muted);
   opacity: 0.65;
+}
+input:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
 }
 .form-note {
   font-size: 9px;
@@ -1386,6 +1550,35 @@ blockquote {
   }
   50% {
     transform: translateY(-9px);
+  }
+}
+@keyframes hero-aura {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(0.94) rotate(-3deg);
+    opacity: 0.52;
+  }
+  100% {
+    transform: translate3d(4%, 2%, 0) scale(1.08) rotate(4deg);
+    opacity: 0.86;
+  }
+}
+@keyframes halo-breathe {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.95;
+  }
+}
+@keyframes project-scan {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(430%);
   }
 }
 @keyframes marquee {
@@ -1807,6 +2000,10 @@ blockquote {
   .magnetic {
     transform: none !important;
   }
+  .project-card:hover,
+  .glass-card:hover {
+    transform: none !important;
+  }
   #cursor {
     display: none;
   }
@@ -1814,6 +2011,9 @@ blockquote {
 @media (pointer: coarse) {
   #cursor {
     display: none;
+  }
+  .project-card:hover {
+    transform: none;
   }
 }
 @media (max-width: 540px) {
