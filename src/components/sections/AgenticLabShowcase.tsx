@@ -27,7 +27,7 @@ export function AgenticLabShowcase() {
   return (
     <section id="github" className="section container">
       <Heading id="github" description={lab.introduction} />
-      <div className="lab-showcase">
+      <div className="lab-showcase reveal">
         <div className="lab-banner">
           <div className="lab-identity">
             <span className="lab-symbol" aria-hidden="true">
@@ -103,7 +103,7 @@ export function AgenticLabShowcase() {
         </div>
         <div className="lab-focus">
           <p className="eyebrow">{lab.focusLabel}</p>
-          <div className="lab-focus-grid">
+          <div className="lab-focus-grid reveal-stagger">
             {lab.focus.map((item) => {
               const Icon = focusIcons[item.icon];
               return (

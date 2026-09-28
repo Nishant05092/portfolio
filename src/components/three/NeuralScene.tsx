@@ -1,5 +1,5 @@
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Points, PointMaterial } from "@react-three/drei";
+import { Points, PointMaterial, Stars } from "@react-three/drei";
 import { useMemo, useRef } from "react";
 import type { Group } from "three";
 function Network() {
@@ -24,8 +24,16 @@ function Network() {
       edges: new Float32Array(lines),
     };
   }, []);
-  useFrame((_, dt) => {
-    if (ref.current) ref.current.rotation.y += dt * 0.055;
+  useFrame(({ pointer, clock }, dt) => {
+    if (!ref.current) return;
+    ref.current.rotation.y += dt * 0.075;
+    ref.current.rotation.x +=
+      (0.2 + pointer.y * 0.14 - ref.current.rotation.x) * Math.min(dt * 2.4, 1);
+    ref.current.rotation.z +=
+      (-0.18 - pointer.x * 0.12 - ref.current.rotation.z) *
+      Math.min(dt * 2.4, 1);
+    const pulse = 1 + Math.sin(clock.elapsedTime * 0.75) * 0.018;
+    ref.current.scale.setScalar(pulse);
   });
   return (
     <group ref={ref} rotation={[0.2, 0, -0.18]}>
@@ -54,6 +62,15 @@ export default function NeuralScene() {
       dpr={[1, 1.5]}
       gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}
     >
+      <Stars
+        radius={8}
+        depth={7}
+        count={450}
+        factor={1.8}
+        saturation={0.15}
+        fade
+        speed={0.35}
+      />
       <Network />
     </Canvas>
   );

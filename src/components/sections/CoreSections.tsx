@@ -99,12 +99,12 @@ export function Hero() {
     <section id="hero" className="hero container">
       <AmbientCanvas />
       <div className="hero-copy">
-        <div className="availability">
+        <div className="availability" data-hero-reveal>
           <span />
           {profile.availability}
           <ArrowUpRight size={13} />
         </div>
-        <p className="eyebrow hero-eyebrow">
+        <p className="eyebrow hero-eyebrow" data-hero-reveal>
           {copy.helloWorldIM}
           {profile.firstName.toUpperCase()}.
         </p>
@@ -121,7 +121,7 @@ export function Hero() {
             </motion.span>
           ))}
         </h1>
-        <div className="role">
+        <div className="role" data-hero-reveal>
           <span>{copy.gt}</span>
           {reduced ? (
             <span>{profile.roles[0]}</span>
@@ -134,8 +134,10 @@ export function Hero() {
             />
           )}
         </div>
-        <p className="hero-description">{profile.tagline}</p>
-        <div className="button-row">
+        <p className="hero-description" data-hero-reveal>
+          {profile.tagline}
+        </p>
+        <div className="button-row" data-hero-reveal>
           <Magnetic>
             <a className="button primary" href="#projects">
               {copy.exploreMyWork}
@@ -147,7 +149,7 @@ export function Hero() {
             <ArrowRight size={17} />
           </a>
         </div>
-        <div className="hero-social">
+        <div className="hero-social" data-hero-reveal>
           <Socials />
           <span className="divider" />
           <a href={profile.resume} download>
@@ -157,6 +159,7 @@ export function Hero() {
         </div>
         <a
           className="hero-lab-reference"
+          data-hero-reveal
           href={
             siteConfig.enabled.github && siteConfig.sections.includes("github")
               ? "#github"
@@ -267,7 +270,7 @@ export function About() {
     <section id="about" className="section container">
       <Heading id="about" />
       <div className="about-layout">
-        <div className="about-copy">
+        <div className="about-copy reveal">
           <div className="profile-line">
             <div className="avatar-ring">
               <img
@@ -289,7 +292,7 @@ export function About() {
             <span /> {profile.focus}
           </div>
         </div>
-        <div className="service-list">
+        <div className="service-list reveal-stagger">
           {services.map((s, i) => (
             <Card key={s.title}>
               <span className="service-icon">
@@ -304,7 +307,7 @@ export function About() {
           ))}
         </div>
       </div>
-      <div className="stats">
+      <div className="stats reveal-stagger">
         {stats.map((s) => (
           <div key={s.label}>
             <strong>
@@ -320,6 +323,7 @@ export function About() {
 export function Projects() {
   const [filter, setFilter] = useState("All");
   const [selected, setSelected] = useState<Project | null>(null);
+  const reduced = useReducedMotion();
   const filtered = projects.filter(
     (p) => filter === "All" || p.category === filter,
   );
@@ -347,17 +351,43 @@ export function Projects() {
           {filtered.length.toString().padStart(2, "0")}
         </span>
       </div>
-      <motion.div layout className="project-grid">
+      <motion.div layout className="project-grid reveal-stagger">
         <AnimatePresence mode="popLayout">
           {filtered.map((p, i) => (
             <motion.article
               layout
               key={p.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.3 }}
               className={`project-card ${p.accent}`}
+              onPointerMove={(event) => {
+                if (reduced || !matchMedia("(pointer:fine)").matches) return;
+                const rect = event.currentTarget.getBoundingClientRect();
+                const x = (event.clientX - rect.left) / rect.width - 0.5;
+                const y = (event.clientY - rect.top) / rect.height - 0.5;
+                event.currentTarget.style.setProperty(
+                  "--card-rx",
+                  `${-y * 6}deg`,
+                );
+                event.currentTarget.style.setProperty(
+                  "--card-ry",
+                  `${x * 8}deg`,
+                );
+                event.currentTarget.style.setProperty(
+                  "--card-x",
+                  `${event.clientX - rect.left}px`,
+                );
+                event.currentTarget.style.setProperty(
+                  "--card-y",
+                  `${event.clientY - rect.top}px`,
+                );
+              }}
+              onPointerLeave={(event) => {
+                event.currentTarget.style.setProperty("--card-rx", "0deg");
+                event.currentTarget.style.setProperty("--card-ry", "0deg");
+              }}
             >
               <button
                 className="project-image"
@@ -469,7 +499,7 @@ export function AgenticShowcase() {
         id="agentic"
         description={copy.intelligenceGetsInterestingWhenSystemsCanPlan}
       />
-      <div className="agent-panel">
+      <div className="agent-panel reveal">
         <div className="agent-top">
           <span>
             <Network size={16} />
@@ -565,7 +595,7 @@ export function Skills() {
         id="skills"
         description={copy.aPracticalToolkitForTakingAnIdea}
       />
-      <div className="skills-grid">
+      <div className="skills-grid reveal-stagger">
         {skills.map((group, i) => (
           <Card key={group.name}>
             <div className="skill-heading">
@@ -577,7 +607,7 @@ export function Skills() {
           </Card>
         ))}
       </div>
-      <div className="marquee" aria-label={copy.technologyStack}>
+      <div className="marquee reveal" aria-label={copy.technologyStack}>
         <div>
           {[...marquee, ...marquee].map((s, i) => (
             <span key={i} aria-hidden={i >= marquee.length}>
@@ -594,7 +624,7 @@ export function Experience() {
   return (
     <section id="experience" className="section container">
       <Heading id="experience" />
-      <div className="timeline">
+      <div className="timeline reveal-stagger">
         <div className="timeline-track">
           <div className="timeline-fill" />
         </div>
