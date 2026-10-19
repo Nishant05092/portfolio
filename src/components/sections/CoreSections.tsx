@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type ReactNode,
+  type FormEvent,
 } from "react";
 import {
   ArrowUpRight,
@@ -180,6 +181,7 @@ export function Hero() {
         className="hero-visual"
         aria-label={copy.illustrationOfAConnectedNeuralNetwork}
       >
+        <HeroAgentMap />
         <div className="orb-halo" />
         <div className="orb-ring ring-one" />
         <div className="orb-ring ring-two" />
@@ -229,6 +231,36 @@ export function Hero() {
         </span>
       </div>
     </section>
+  );
+}
+function HeroAgentMap() {
+  const [active, setActive] = useState(0);
+  return (
+    <div className="hero-agent-map" aria-label="Conceptual agent workflow illustration">
+      <div className="hero-agent-map-head">
+        <span>AGENT SYSTEM / 01</span>
+        <span><i /> CONCEPTUAL WORKFLOW</span>
+      </div>
+      <div className="hero-agent-network">
+        <div className="hero-agent-links" aria-hidden="true"><i /><i /><i /><i /><i /></div>
+        <div className="hero-agent-core"><span>ORCHESTRATION</span><strong>Agent<br />workflow</strong><small>PLAN → ACT → VERIFY</small></div>
+        {workflow.map((step, index) => (
+          <button
+            key={step.name}
+            className={`hero-agent-node hero-agent-node-${index} ${active === index ? "is-active" : ""}`}
+            onClick={() => setActive(index)}
+            aria-pressed={active === index}
+          >
+            <span className="hero-agent-node-index">0{index + 1}</span>
+            <strong>{step.name}</strong>
+          </button>
+        ))}
+      </div>
+      <div className="hero-agent-map-foot">
+        <p><span>{workflow[active].name}</span> — {workflow[active].description}</p>
+        <a href="#agentic">Explore the workflow <ArrowUpRight size={14} /></a>
+      </div>
+    </div>
   );
 }
 function Counter({
@@ -584,10 +616,44 @@ export function AgenticShowcase() {
           </div>
         </div>
       </div>
+      <DeveloperTerminal />
     </section>
   );
 }
+function DeveloperTerminal() {
+  const [command, setCommand] = useState("");
+  const [output, setOutput] = useState("Type help to see available commands.");
+  const run = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = command.trim().toLowerCase();
+    const destinations: Record<string, string> = {
+      about: "about", skills: "skills", projects: "projects",
+      experience: "experience", contact: "contact",
+    };
+    if (value === "clear") setOutput("");
+    else if (value === "help") setOutput("Commands: help · about · skills · projects · experience · contact · clear");
+    else if (destinations[value]) {
+      document.getElementById(destinations[value])?.scrollIntoView({ behavior: "smooth" });
+      setOutput(`Opening ${value} section.`);
+    } else setOutput(`Unknown command: ${value || "(empty)"}. Type help for available commands.`);
+    setCommand("");
+  };
+  return (
+    <div className="developer-terminal reveal" aria-label="Portfolio navigation terminal">
+      <div className="developer-terminal-bar"><span className="terminal-dots"><i /><i /><i /></span><span>portfolio / navigation</span><span className="terminal-ready">LOCAL</span></div>
+      <p className="developer-terminal-intro">A small command interface for exploring this portfolio. Commands navigate to existing sections.</p>
+      <form onSubmit={run}>
+        <label htmlFor="portfolio-command">nishant@portfolio:~$</label>
+        <input id="portfolio-command" value={command} onChange={(event) => setCommand(event.target.value)} autoComplete="off" spellCheck={false} aria-label="Portfolio command" />
+        <button type="submit" className="terminal-submit">Run</button>
+      </form>
+      <output aria-live="polite">{output}</output>
+    </div>
+  );
+}
 export function Skills() {
+  const [category, setCategory] = useState("All");
+  const groups = category === "All" ? skills : skills.filter((group) => group.name === category);
   const marquee = skills.flatMap((g) => g.skills).slice(0, 12);
   return (
     <section id="skills" className="section container">
@@ -595,13 +661,18 @@ export function Skills() {
         id="skills"
         description={copy.aPracticalToolkitForTakingAnIdea}
       />
+      <div className="skill-filters" role="group" aria-label="Filter skills by category">
+        {["All", ...skills.map((group) => group.name)].map((name) => (
+          <button key={name} className={category === name ? "selected" : ""} aria-pressed={category === name} onClick={() => setCategory(name)}>{name}</button>
+        ))}
+      </div>
       <div className="skills-grid reveal-stagger">
-        {skills.map((group, i) => (
+        {groups.map((group) => (
           <Card key={group.name}>
             <div className="skill-heading">
               <Command size={17} />
               <h3>{group.name}</h3>
-              <span>0{i + 1}</span>
+              <span>{String(skills.indexOf(group) + 1).padStart(2, "0")}</span>
             </div>
             <Tags items={group.skills} />
           </Card>

@@ -152,6 +152,31 @@ export const skills: SkillGroup[] = [
     skills: ["RAG", "LLM APIs", "Prompt engineering", "Vector search"],
   },
   {
+    name: "LLM evaluation",
+    skills: [
+      "LLM evaluation",
+      "RAG evaluation",
+      "Evaluation datasets",
+      "LLM-as-a-judge",
+      "Hallucination testing",
+    ],
+  },
+  {
+    name: "AI security & guardrails",
+    skills: [
+      "AI security",
+      "LLM guardrails",
+      "Prompt injection defense",
+      "PII protection",
+      "Output validation",
+      "Responsible AI",
+    ],
+  },
+  {
+    name: "LLM observability",
+    skills: ["LLM tracing", "Quality monitoring", "Latency & cost monitoring"],
+  },
+  {
     name: "Agentic frameworks",
     skills: ["LangGraph", "LangChain", "Multi-agent systems"],
   },
